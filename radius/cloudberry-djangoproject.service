@@ -1,0 +1,27 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+USE_PROCD=0
+QUIET=""
+
+restart() {
+	fw3 restart
+}
+
+start_service() {
+	cd /cloudberry-djangoproject
+        gunicorn -w 4 cloudberry_djangoproject.wsgi:application & echo $! > /var/run/cloudberry-djangoproject.pid
+}
+
+stop_service() {
+	kill -KILL $(cat /var/run/cloudberry-djangoproject.pid)
+}
+
+reload_service() {
+	stop_service
+        start_service
+}
+
+boot() {
+	start
+}

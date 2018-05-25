@@ -1,0 +1,11 @@
+detail auth_log {
+   detailfile = /var/log/detail_authlog/%Y%m%d/request-detail-%H:00
+   detailperm = 0600
+   header = "%{Packet-Src-IP-Address} - %t"
+   log_packet_header = yes
+   suppress {
+       User-Password
+   }
+}
+
+			 
