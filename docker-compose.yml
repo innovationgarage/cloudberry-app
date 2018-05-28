@@ -1,6 +1,26 @@
 version: '2'
 
 services:
+  djangoproject:
+    image: cloudberry-djangoproject
+    build: ./cloudberry-djangoproject
+    ports:
+      - 8000:80
+    networks:
+      - elk
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - elk
 
   elasticsearch:
     build:
@@ -61,3 +81,4 @@ networks:
 
 volumes:
   radiuslogs:
+  database:
