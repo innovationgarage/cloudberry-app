@@ -2,14 +2,30 @@ version: '2'
 
 services:
   djangoproject:
-    image: cloudberry-djangoproject
     build: ./cloudberry-djangoproject
+    environment:
+      DOCKER_MANAGER_UUID: "d23eba83-fc94-4ede-90fe-34a7ceb468e9"
+      DOCKER_MANAGER_KEY: "ufZvOiPh5EWp6kRH8if2oX4Wysx0WwS0"
     ports:
       - 8000:80
     networks:
       - elk
     depends_on:
       - db
+
+  docker-manager:
+    build:
+      context: cloudberry-docker-manager
+    environment:
+      OPENWISP_URL: "http://djangoproject"
+      OPENWISP_UUID: "d23eba83-fc94-4ede-90fe-34a7ceb468e9"
+      OPENWISP_KEY: "ufZvOiPh5EWp6kRH8if2oX4Wysx0WwS0"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
+    depends_on:
+      - djangoproject
 
   db:
     image: postgres
@@ -67,7 +83,6 @@ services:
       - elasticsearch
 
   radius:
-    image: cloudberry-radius
     build:
       context: radius/
     volumes:
