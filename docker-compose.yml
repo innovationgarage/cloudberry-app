@@ -17,7 +17,7 @@ services:
     build:
       context: cloudberry-docker-manager
     environment:
-      OPENWISP_URL: "http://djangoproject"
+      OPENWISP_URL: "http://djangoproject/cloudberry"
       OPENWISP_UUID: "d23eba83-fc94-4ede-90fe-34a7ceb468e9"
       OPENWISP_KEY: "ufZvOiPh5EWp6kRH8if2oX4Wysx0WwS0"
     volumes:

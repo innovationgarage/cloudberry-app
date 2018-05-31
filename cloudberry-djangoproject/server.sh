@@ -14,27 +14,12 @@
 
     source env/bin/activate
 
+    python manage.py collectstatic --noinput
+    
     if [ "${DOCKER_MANAGER_UUID}" != "" ]; then
-      cat > examples/docker-manager-device.json <<EOF
-[
-  {
-    "id": "${DOCKER_MANAGER_UUID}",
-    "created": "2018-05-30 08:08:13",
-    "modified": "2018-05-30 08:08:13",
-    "name": "docker-manager",
-    "key": "${DOCKER_MANAGER_KEY}",
-    "model": "",
-    "os": "",
-    "system": "",
-    "notes": "",
-    "mac_address": "",
-    "status": "modified",
-    "last_ip": "",
-    "backend": "/cloudberry/cloudberry_app/schema/backend/cloudberry_netjson.OpenWrt"
-  }
-]
-EOF
-      python3 manage.py import_file --resource-class cloudberry_app.importexport.DeviceResource examples/docker-manager-device.json
+
+      ./docker-manager-config.json.sh > examples/docker-manager-config.json
+      python3 manage.py import_file --resource-class cloudberry_app.importexport.ConfigResource examples/docker-manager-config.json
     fi
 )
 
