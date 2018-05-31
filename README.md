@@ -12,6 +12,8 @@ This repository contains a docker compose file for running
 
     docker-compose up
 
+The configuration UI is available on the host as `http://localhost:8000/cloudberry`, all other protocols (radius, postgres) in their default ports.
+
 ## Stopping, removing everything
 
     docker-compose stop
@@ -20,3 +22,9 @@ This repository contains a docker compose file for running
     docker volume rm cloudberryapp_radiuslogs
 
     docker rmi -f $(docker images | grep "^cloudberryapp" | sed -e "s+  .*++g")
+
+## Deployment
+
+When deploying in production, use the following command line to publish the configuration UI on port 80:
+
+    CLOUDBERRY_PORT_HTTP=80 docker-compose up -d --build
