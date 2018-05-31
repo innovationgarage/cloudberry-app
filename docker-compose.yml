@@ -1,7 +1,26 @@
+---
 version: '2'
+services:
+  # The environment variable "TAG" is used throughout this file to
+  # specify the version of the images to run. The default is set in the
+  # '.env' file in this folder. It can be overridden with any normal
+  # technique for setting environment variables, for example:
+  #
+  #   TAG=6.0.0-beta1 docker-compose up
+  #
+  # REF: https://docs.docker.com/compose/compose-file/#variable-substitution
+  #
+  # Also be sure to set the ELASTIC_VERSION variable. For released versions,
+  # ${TAG} and ${ELASTIC_VERSION} will be identical, but for pre-release
+  # versions, ${TAG} might contain an extra build identifier, like
+  # "6.0.0-beta1-3eab5b40", so a full invocation might look like:
+  #
+  #   ELASTIC_VERSION=6.0.0-beta1 TAG=6.0.0-beta1-3eab5b40 docker-compose up
+  #
 
 services:
   djangoproject:
+    container_name: djangoproject
     build: ./cloudberry-djangoproject
     environment:
       DOCKER_MANAGER_UUID: "d23eba83-fc94-4ede-90fe-34a7ceb468e9"
@@ -14,6 +33,7 @@ services:
       - db
 
   docker-manager:
+    container_name: docker-manager  
     build:
       context: cloudberry-docker-manager
     environment:
@@ -28,6 +48,7 @@ services:
       - djangoproject
 
   db:
+    container_name: db
     image: postgres
     restart: always
     environment:
@@ -41,59 +62,60 @@ services:
       - elk
 
   elasticsearch:
-    build:
-      context: elasticsearch/
-    volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      ELASTIC_PASSWORD: changeme
-    networks:
-      - elk
-
-  logstash:
-    build:
-      context: logstash/
-    volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-      - radiuslogs:/radiuslogs
-    ports:
-      - "5000:5000"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${TAG}
+    container_name: elasticsearch_cb
+    environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1', 'ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
+    ports: ['127.0.0.1:9200:9200']
+    networks: ['elk']
 
   kibana:
-    build:
-      context: kibana/
-    volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    ports:
-      - "5601:5601"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+    image: docker.elastic.co/kibana/kibana:${TAG}
+    container_name: kibana_cb
+    environment: ['ELASTICSEARCH_USERNAME=kibana', 'ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}']
+    ports: ['127.0.0.1:5601:5601']
+    networks: ['elk']
+    depends_on: ['elasticsearch']
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:${TAG}
+    container_name: logstash_cb
+    environment: ['xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD}']
+    # Provide a simple pipeline configuration for Logstash with a bind-mounted file.
+    volumes: ['./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf', 'radiuslogs:/radiuslogs']
+    user: '0'
+    networks: ['elk']
+    depends_on: ['elasticsearch', 'setup_logstash']
+
+  # Run a short-lived container to set up Logstash.
+  setup_logstash:
+    image: centos:7
+    container_name: setup_logstash
+    volumes: ['./scripts/setup-logstash.sh:/usr/local/bin/setup-logstash.sh:ro']
+    # The script may have CR/LF line endings if using Docker for Windows, so
+    # make sure that they don't confuse Bash.
+    command: ['/bin/bash', '-c', 'cat /usr/local/bin/setup-logstash.sh | tr -d "\r" | bash']
+    environment: ['ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
+    networks: ['elk']
+    depends_on: ['elasticsearch']
+
+  setup_kibana:
+    image: centos:7
+    container_name: setup_kibana
+    volumes: ['./scripts/setup-kibana.sh:/usr/local/bin/setup-kibana.sh:ro']
+    command: ['/bin/bash', '-c', 'cat /usr/local/bin/setup-kibana.sh | tr -d "\r" | bash']
+    environment: ['ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
+    networks: ['elk']
+    depends_on: ['elasticsearch']
 
   radius:
+    container_name: radius
     build:
       context: radius/
-    volumes:
-      - radiuslogs:/var/log/detail_authlog
-    ports:
-      - "1812:1812/udp"
-      - "1813:1813/udp"
-    networks:
-      - elk
-    depends_on:
-      - db
+    volumes: ['radiuslogs:/var/log/detail_authlog']
+    user: '0'
+    ports: ["1812:1812/udp", "1813:1813/udp"]
+    networks: ['elk']
+    depends_on: ['db']
 
 networks:
   elk:
