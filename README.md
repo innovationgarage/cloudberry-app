@@ -14,6 +14,8 @@ This repository contains a docker compose file for running
 
 The configuration UI is available on the host as `http://localhost:8000/cloudberry`, all other protocols (radius, postgres) in their default ports.
 
+Kibana is available at http://localhost:5601. You need to log in with elastic / changeme.
+
 ## Stopping, removing everything
 
     docker-compose stop
