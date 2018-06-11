@@ -19,6 +19,23 @@ services:
   #
 
 services:
+  debug-coovachilli:
+    container_name: debug-coovachilli
+    build: ./debug-coovachilli
+    networks:
+      - elk
+      - debug
+    depends_on:
+      - radius
+
+  debug-client:
+    container_name: djangoproject
+    image: ubuntu:latest
+    networks:
+      - debug
+    depends_on:
+      - debug-coovachilli
+
   djangoproject:
     container_name: djangoproject
     build: ./cloudberry-djangoproject
@@ -119,6 +136,8 @@ services:
 
 networks:
   elk:
+    driver: bridge
+  debug:
     driver: bridge
 
 volumes:
