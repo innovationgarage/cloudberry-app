@@ -20,23 +20,30 @@ services:
 
 services:
   debug-coovachilli:
+    hostname: debug-coovachilli
     container_name: debug-coovachilli
     build: ./debug-coovachilli
+    cap_add:
+      - NET_ADMIN
     networks:
-      - elk
       - debug
+      - elk
     depends_on:
       - radius
 
   debug-client:
-    container_name: djangoproject
-    image: ubuntu:latest
+    hostname: debug-client
+    container_name: debug-client
+    build: ./debug-client
+    cap_add:
+      - NET_ADMIN
     networks:
       - debug
     depends_on:
       - debug-coovachilli
 
   djangoproject:
+    hostname: djangoproject
     container_name: djangoproject
     build: ./cloudberry-djangoproject
     environment:
@@ -50,6 +57,7 @@ services:
       - db
 
   docker-manager:
+    hostname: docker-manager
     container_name: docker-manager  
     build:
       context: cloudberry-docker-manager
@@ -65,6 +73,7 @@ services:
       - djangoproject
 
   db:
+    hostname: db
     container_name: db
     image: postgres
     restart: always
@@ -79,6 +88,7 @@ services:
       - elk
 
   elasticsearch:
+    hostname: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${TAG}
     container_name: elasticsearch_cb
     environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1', 'ELASTIC_PASSWORD=${ELASTIC_PASSWORD}']
@@ -86,6 +96,7 @@ services:
     networks: ['elk']
 
   kibana:
+    hostname: kibana
     image: docker.elastic.co/kibana/kibana:${TAG}
     container_name: kibana_cb
     environment: ['ELASTICSEARCH_USERNAME=kibana', 'ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}']
@@ -94,6 +105,7 @@ services:
     depends_on: ['elasticsearch']
 
   logstash:
+    hostname: logstash
     image: docker.elastic.co/logstash/logstash:${TAG}
     container_name: logstash_cb
     environment: ['xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD}']
@@ -125,6 +137,7 @@ services:
     depends_on: ['elasticsearch']
 
   radius:
+    hostname: radius
     container_name: radius
     build:
       context: radius/
@@ -139,7 +152,9 @@ networks:
     driver: bridge
   debug:
     driver: bridge
+    internal: True
 
 volumes:
   radiuslogs:
   database:
+  images:

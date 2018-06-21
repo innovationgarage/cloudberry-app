@@ -1,18 +1,18 @@
 # vim: filetype=uci
 
-config chilli
-    option radiussecret "please-change-me"
-    option uamsecret "please-change-me"
+config chilli 'chilli'
+    option radiussecret "testing123"
+    option uamsecret "testing123"
 
-    option radiusserver1 "cloudberry.innovationgarage.tech"
-    option radiusserver2 "cloudberry.innovationgarage.tech"
+    option radiusserver1 "radius"
+    option radiusserver2 "radius"
 
     option wwwdir '/etc/chilli/www'
     option wwwbin '/etc/chilli/wwwsh'
   
     option uamuiport '4990'
     option uamport '3990'
-    option dhcpif "br-lan"
+    option dhcpif "eth0"
 
     option dns1 '8.8.8.8'
     option dns2 '8.8.4.4'
