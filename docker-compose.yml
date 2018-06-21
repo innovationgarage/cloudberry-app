@@ -137,3 +137,5 @@ networks:
 volumes:
   radiuslogs:
   database:
+  images:
+  
