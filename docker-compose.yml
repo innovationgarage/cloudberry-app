@@ -19,6 +19,19 @@ services:
   #
 
 services:
+  image-generation:
+    hostname: image-generation
+    container_name: image-generation
+    build: https://github.com/innovationgarage/cloudberry-image-generation.git
+    privileged: true
+    volumes:
+      - ./images:/workdir/images
+      - images:/workdir/output
+    networks:
+      - elk
+    ports:
+      - "5000:5000"
+
   djangoproject:
     container_name: djangoproject
     build: ./cloudberry-djangoproject
