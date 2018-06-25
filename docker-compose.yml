@@ -25,12 +25,21 @@ services:
     build: https://github.com/innovationgarage/cloudberry-image-generation.git
     privileged: true
     volumes:
-      - ./images:/workdir/images
-      - images:/workdir/output
+      - base-images:/workdir/images
+      - device-images:/workdir/output
     networks:
       - elk
     ports:
       - "5000:5000"
+
+  download-images:
+    hostname: download-images
+    container_name: download-images
+    build: download-images
+    volumes:
+      - base-images:/images
+    networks:
+      - elk
 
   djangoproject:
     container_name: djangoproject
@@ -39,13 +48,14 @@ services:
       DOCKER_MANAGER_UUID: "d23eba83-fc94-4ede-90fe-34a7ceb468e9"
       DOCKER_MANAGER_KEY: "ufZvOiPh5EWp6kRH8if2oX4Wysx0WwS0"
     volumes:
-      - images:/images
+      - device-images:/images
     ports:
       - "${CLOUDBERRY_PORT_HTTP}:80"
     networks:
       - elk
     depends_on:
       - db
+      - image-generation
 
   docker-manager:
     container_name: docker-manager  
@@ -139,5 +149,6 @@ networks:
 volumes:
   radiuslogs:
   database:
-  images:
+  base-images:
+  device-images:
   
