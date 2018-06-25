@@ -38,6 +38,8 @@ services:
     environment:
       DOCKER_MANAGER_UUID: "d23eba83-fc94-4ede-90fe-34a7ceb468e9"
       DOCKER_MANAGER_KEY: "ufZvOiPh5EWp6kRH8if2oX4Wysx0WwS0"
+    volumes:
+      - images:/images
     ports:
       - "${CLOUDBERRY_PORT_HTTP}:80"
     networks:
