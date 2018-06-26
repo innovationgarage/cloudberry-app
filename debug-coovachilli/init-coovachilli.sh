@@ -47,10 +47,12 @@ uci set chilli.@chilli[0].uamserver="http://${LAN_IPADDR}:4990/www/login.chi"
 uci set chilli.@chilli[0].uamhomepage="http://${LAN_IPADDR}:3990/www/coova.html"
 
 
+uci set network.lan.proto="static"
 uci set network.lan.ifname="${LAN_IFNAME}"
 uci set network.lan.ipaddr="${LAN_IPADDR}"
 uci set network.lan.netmask="${LAN_NETMASK}"
 
+uci set network.wan.proto="static"
 uci set network.wan.ifname="${WAN_IFNAME}"
 uci set network.wan.ipaddr="${WAN_IPADDR}"
 uci set network.wan.netmask="${WAN_NETMASK}"
