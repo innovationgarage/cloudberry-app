@@ -1,6 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt update
-RUN apt install -y net-tools isc-dhcp-client elinks iputils-ping traceroute telnet
+RUN apt install -y net-tools isc-dhcp-client elinks iputils-ping traceroute telnet wget links2 firefox xauth
 
-CMD /bin/sh -c 'while sleep 1; do : ; done'
+ADD init.sh /init.sh
+CMD /init.sh

@@ -39,8 +39,14 @@ services:
       - NET_ADMIN
     networks:
       - debug
+    environment:
+      DISPLAY: "${DISPLAY}"
     depends_on:
       - debug-coovachilli
+    volumes:
+      - /etc/hostname:/outer_hostname
+      - /tmp/.X11-unix/X0:/tmp/.X11-unix/X0
+      - ~/.Xauthority:/root/.Xauthority.outer
 
   djangoproject:
     hostname: djangoproject
