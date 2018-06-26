@@ -1,5 +1,7 @@
 #! /bin/sh
 
+set -x
+
 mkdir /dev/net
 mknod /dev/net/tun c 10 200
 
@@ -36,13 +38,13 @@ LAN_NETMASK="$(ifconfig "${LAN_IFNAME}" | grep inet | sed -e "s+.*Mask:\([^ ]*\)
 LAN_CIDR="$(mask2cdr "${LAN_NETMASK}")"
 LAN_NETWORK="$(route -n | grep "${LAN_IFNAME}" | sed -e "s/^\([^ ]*\) .*/\1/g")"
 
-uci set chilli.chilli.dhcpif="${LAN_IFNAME}"
-uci set chilli.chilli.uamlisten="${LAN_IPADDR}"
-uci set chilli.chilli.net="${LAN_NETWORK}/${LAN_CIDR}"
-uci set chilli.chilli.uamallowed="$(uci get chilli.chilli.uamallowed),${LAN_IPADDR}"
+uci set chilli.@chilli[0].dhcpif="${LAN_IFNAME}"
+uci set chilli.@chilli[0].uamlisten="${LAN_IPADDR}"
+uci set chilli.@chilli[0].net="${LAN_NETWORK}/${LAN_CIDR}"
+uci set chilli.@chilli[0].uamallowed="$(uci get chilli.@chilli[0].uamallowed),${LAN_IPADDR}"
 
-uci set chilli.chilli.uamserver 'http://${LAN_IPADDR}:4990/www/login.chi'
-uci set chilli.chilli.uamhomepage 'http://${LAN_IPADDR}:3990/www/coova.html'
+uci set chilli.@chilli[0].uamserver="http://${LAN_IPADDR}:4990/www/login.chi"
+uci set chilli.@chilli[0].uamhomepage="http://${LAN_IPADDR}:3990/www/coova.html"
 
 
 uci set network.lan.ifname="${LAN_IFNAME}"
