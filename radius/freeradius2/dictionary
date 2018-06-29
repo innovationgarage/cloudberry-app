@@ -32,3 +32,5 @@ $INCLUDE	/usr/share/freeradius2/dictionary
 #ATTRIBUTE	My-Local-Integer	3002	integer
 
 ATTRIBUTE Max-All-Session 3000 integer
+
+$INCLUDE /etc/freeradius2/dictionary.coovachilli
