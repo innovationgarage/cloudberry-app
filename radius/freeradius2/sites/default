@@ -221,10 +221,18 @@ authorize {
 #
 #	}
 
-        update control {
-            Max-All-Session := 0
+#        update control {
+#            Max-All-Session := 0
+#        }
+#        noresetcounter
+
+
+        if ("%{sql:SELECT sum(amount) < 0 FROM radacct WHERE username = '%{User-Name}'}" == "t") {
+                update reply {
+                        Reply-Message = "Out of quota. Nananana. Batman!"
+                }
+                reject
         }
-        noresetcounter
 
 }
 
@@ -448,7 +456,7 @@ accounting {
 #	}
 
 
-        if ("%{sql:SELECT sum(acctinputoctets + acctoutputoctets) > (select sum(o.quantity) from cloudberry_order_order o join auth_user u on o.user_id = u.id where u.username='%{User-Name}') FROM radacct WHERE username = '%{User-Name}'}" == "t") {
+        if ("%{sql:SELECT sum(amount) < 0 FROM radacct WHERE username = '%{User-Name}'}" == "t") {
                 update reply {
                         Reply-Message = "Out of quota. Nananana. Batman!"
                         CoovaChilli-Config = "logout"

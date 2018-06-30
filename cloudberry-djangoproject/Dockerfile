@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN echo version 3 cache punch
+RUN echo version 4 cache punch
 
 RUN apt update
 
@@ -11,11 +11,11 @@ RUN virtualenv --system-site-packages --python=python3 cloudberry-djangoproject/
 
 RUN cd cloudberry-djangoproject; make install-depends
 
-RUN echo version 14 cache punch
+RUN echo version 1 cache punch
 
 RUN cd cloudberry-djangoproject; git pull; make install-depends
 
-ADD local_settings.py /cloudberry-djangoproject/local_settings.py
+ADD db_settings.py /cloudberry-djangoproject/db_settings.py
 ADD docker-manager-config.json.sh /cloudberry-djangoproject/docker-manager-config.json.sh
 ADD 000-default.conf /etc/apache2/sites-available/000-default.conf
 ADD server.sh /server.sh

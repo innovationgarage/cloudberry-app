@@ -3,6 +3,8 @@
 (
     cd cloudberry-djangoproject
 
+    cat db_settings.py /local_settings.py > local_settings.py
+    
     while ! echo "select 1;" | PGPASSWORD=example psql -h db -U postgres postgres > /dev/null 2>&1 ; do
         echo "Waiting for db"
         sleep 2
