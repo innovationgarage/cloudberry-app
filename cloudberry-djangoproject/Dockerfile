@@ -11,7 +11,7 @@ RUN virtualenv --system-site-packages --python=python3 cloudberry-djangoproject/
 
 RUN cd cloudberry-djangoproject; make install-depends
 
-RUN echo version 1 cache punch
+RUN echo version 8 cache punch
 
 RUN cd cloudberry-djangoproject; git pull; make install-depends
 
