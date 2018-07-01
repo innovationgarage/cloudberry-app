@@ -8,6 +8,12 @@ This repository contains a docker compose file for running
 * logstash
 * postgres
 
+## Install
+
+    apt install docker.io docker-compose
+    cp local_settings.py.template local_settings.py
+    emacs local_settings.py
+
 ## Running
 
     docker-compose up
