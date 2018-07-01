@@ -1,0 +1,7 @@
+EMAIL_HOST_USER = 'xxxx@gmail.com'
+EMAIL_HOST_PASSWORD = 'xxxx'
+
+SEND_ACTIVATION_EMAIL = True
+
+PAYPAL_RECEIVER_EMAIL = 'xxxx@gmail.com'
+PAYPAL_IDENTITY_TOKEN = "xxxx"
